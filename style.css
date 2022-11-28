@@ -1,3 +1,20 @@
+body {
+    background-color: #333547;
+    margin: 50px 0;
+    text-align: center;
+}
+
 h1 {
     font-family: Georgia, 'Times New Roman', Times, serif;
+    color: cornsilk;
+    font-style: italic;
+}
+
+h1 strike {
+    letter-spacing: -3px;
+}
+
+h1 sub {
+    vertical-align: baseline;
+    font-size: 22px;
 }
