@@ -64,6 +64,10 @@ h1 sub {
     min-height: 32px;
     position: relative;
 }
+#pixels {
+    display: flex;
+    flex-wrap: wrap;
+}
 
 #screen-borders {
     box-sizing: border-box;
@@ -98,4 +102,8 @@ h1 sub {
     border-color: #b9b9b9;
     border-width: 8px;
     box-sizing: border-box;
+}
+
+.pixel {
+    border: 1px solid black;
 }
