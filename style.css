@@ -6,15 +6,96 @@ body {
 
 h1 {
     font-family: Georgia, 'Times New Roman', Times, serif;
-    color: cornsilk;
+    color: rgb(236, 210, 104);
     font-style: italic;
+    word-spacing: 12px;
+    font-weight: 600;
+    font-size: 48px;
+    padding: 0;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    height: 0;
+}
+
+h1 sup {
+    font-family: Arial, Helvetica, sans-serif;
+    vertical-align: baseline;
+    font-size: 15px;
+}
+
+h1 b {
+    vertical-align: middle;
+    letter-spacing: -3px;
+    text-decoration: line-through;
 }
 
 h1 strike {
     letter-spacing: -3px;
+    vertical-align: sub;
+}
+
+h1 span {
+    letter-spacing: 1px;
+    vertical-align: sub;
+    font-size: 56px;
 }
 
 h1 sub {
     vertical-align: baseline;
     font-size: 22px;
+}
+
+#device {
+    padding: 0;
+    background-color: rgb(173, 41, 41);
+    max-width: 640px;
+    min-height: 256px;
+    border-radius: 28px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#screen {
+    background-color: #cecece;
+    width: 80%;
+    margin: 50px auto;
+    min-height: 32px;
+    position: relative;
+}
+
+#screen-borders {
+    box-sizing: border-box;
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    border-width: 20px;
+    border-color: rgb(173, 41, 41);
+    border-radius: 30px;
+    border-style: solid;
+    z-index: 1;
+}
+
+#knobs {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    z-index: 99;
+    margin-top: -40px;
+    height: 70px;
+}
+
+.knob {
+    height: 90px;
+    width: 90px;
+    margin: 0 12px;
+    background-color: #cecece;
+    border-radius: 90px;
+    border-style: solid;
+    border-color: #b9b9b9;
+    border-width: 8px;
+    box-sizing: border-box;
 }
