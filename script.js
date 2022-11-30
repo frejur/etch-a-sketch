@@ -9,9 +9,43 @@ const etch = (
     };
     const grid = [];
     const ASP_R = 0.65;
+    const cursorPosition = {};
+    const cursorOnScreenPosition = {};
     const pixels = document.getElementById('pixels');
     const style = document.createElement('style');
     document.head.appendChild(style);
+    const debug = {};
+    document.getElementById('debug');
+
+    const POLL_DELAY = 100;
+    let pollCount = 0;
+
+    function getDebugParameter() {
+      const q = window.location.search;
+      const params = new URLSearchParams(q);
+      return (params.get('debug') === 'true');
+    }
+
+    function initDebug() {
+      const cont = document.getElementById('debug');
+      if (getDebugParameter() !== true) {
+        debug.active = false;
+        cont.style.display = 'none';
+        return false;
+      }
+      debug.active = true;
+      const d = document;
+      debug.elements = {
+        container: cont,
+        pollStatus: d.getElementById('poll-status'),
+        pollCount: d.getElementById('poll-count'),
+        pollDelay: d.getElementById('poll-delay'),
+        cursorPos: d.getElementById('cursor-pos'),
+      };
+
+      debug.elements.pollDelay.innerText = POLL_DELAY;
+      return true;
+    }
 
     function validateDimension(dim) {
       if (typeof dim !== 'number') {
@@ -28,7 +62,7 @@ const etch = (
       style.innerHTML = (
         `.pixel { width: ${100 / gridSize.x}%; `
         + `padding-bottom: ${100 / gridSize.x}%; `
-        + `box-sizing: border-box; }`
+        + 'box-sizing: border-box; }'
       );
     }
 
@@ -92,17 +126,116 @@ const etch = (
       } while (thisRow < maxRow);
     }
 
-    return {
-      generateGrid: (size) => {
-        let newSize = size;
-        if (!size) {
-          newSize = SZ_DEFAULT;
+    function generateNewGrid(size) {
+      let newSize = size;
+      if (!size) {
+        newSize = SZ_DEFAULT;
+      }
+      updateSize(newSize, Math.round(newSize * ASP_R));
+      populateGrid();
+      generateDivs();
+    }
+
+    function updateDebugDashboard() {
+      const e = debug.elements;
+      e.pollStatus.innerText = (
+        (pollCount > 0) ?
+          'Active' :
+          'Inactive'
+      );
+      e.pollCount.innerText = pollCount;
+      const cp = cursorOnScreenPosition;
+      e.cursorPos.innerText = `x: ${cp.x}, y: ${cp.y}`;
+    }
+
+    function updateCursorOnScreenPosition() {
+      const screenPos = pixels.getBoundingClientRect();
+      cursorOnScreenPosition.x = (
+        Math.max(
+          0,
+          Math.min(
+            screenPos.right - screenPos.left,
+            cursorPosition.x - screenPos.left,
+          ),
+        )
+      );
+      cursorOnScreenPosition.y = (
+        Math.max(
+          0,
+          Math.min(
+            screenPos.bottom - screenPos.top,
+            cursorPosition.y - screenPos.top,
+          ),
+        )
+      );
+    }
+
+    function stopPolling(pos) {
+      if (pos) {
+        cursorPosition.x = pos.x;
+        cursorPosition.y = pos.y;
+        updateCursorOnScreenPosition();
+      }
+      pollCount = 0;
+      updateDebugDashboard();
+    }
+
+    function pollForMouseMovement() {
+      updateCursorOnScreenPosition();
+      updateDebugDashboard();
+      if (pollCount <= 1) {
+        stopPolling();
+        return;
+      }
+      pollCount -= 1;
+      setTimeout(pollForMouseMovement, POLL_DELAY);
+    }
+
+    function startPolling(pos) {
+      if (pollCount < 1) {
+        pollCount = 20;
+        pollForMouseMovement();
+      }
+    }
+
+    function addEventListeners() {
+      const screen = document.getElementById('screen');
+      screen.addEventListener('mouseenter', (event) => {
+        const pos = {
+          x: event.pageX,
+          y: event.pageY,
+        };
+        startPolling(pos);
+      });
+      screen.addEventListener('mouseleave', (event) => {
+        const pos = {
+          x: event.pageX,
+          y: event.pageY,
+        };
+        stopPolling(pos);
+      });
+      document.onmousemove = (e) => {
+        if (pollCount < 1) {
+          return;
         }
-        updateSize(newSize, Math.round(newSize * ASP_R));
-        populateGrid();
-        generateDivs();
-      },
+        cursorPosition.x = e.pageX;
+        cursorPosition.y = e.pageY;
+      };
+    }
+
+    function initNormal() {
+      generateNewGrid();
+      addEventListeners();
+    }
+
+    if (!initDebug()) {
+      initNormal();
+    }
+
+    return {
+      generateGrid: (size) => generateNewGrid(size),
       drawGrid: () => console.log('Draw'),
+      init: initNormal,
     };
   }
 )();
