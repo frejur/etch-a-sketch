@@ -7,10 +7,12 @@ const etch = (
       x: SZ_DEFAULT,
       y: SZ_DEFAULT,
     };
+    let pixelSize;
     const grid = [];
     const ASP_R = 0.65;
     const cursorPosition = {};
     const cursorOnScreenPosition = {};
+    const cursorPixelPosition = {};
     const pixels = document.getElementById('pixels');
     const style = document.createElement('style');
     document.head.appendChild(style);
@@ -41,6 +43,8 @@ const etch = (
         pollCount: d.getElementById('poll-count'),
         pollDelay: d.getElementById('poll-delay'),
         cursorPos: d.getElementById('cursor-pos'),
+        pixelSize: d.getElementById('pixel-size'),
+        pixelPos: d.getElementById('pixel-pos'),
       };
 
       debug.elements.pollDelay.innerText = POLL_DELAY;
@@ -56,6 +60,25 @@ const etch = (
       );
     }
 
+    function getPixelSize(pixelCountX, dSizeX) {
+      return Math.max(
+        1,
+        Math.floor(dSizeX / pixelCountX),
+      );
+    }
+
+    function getPixelFromPosition(pos, pxSize) {
+      cursorPixelPosition.x = Math.round(pos.x / pxSize) + 1;
+      cursorPixelPosition.y = Math.round(pos.y / pxSize) + 1;
+    }
+
+    function updateCursorPixelPosition() {
+      getPixelFromPosition(
+        cursorOnScreenPosition,
+        pixelSize,
+      );
+    }
+
     function updateSize(x, y) {
       gridSize.x = validateDimension(x);
       gridSize.y = validateDimension(y);
@@ -63,6 +86,10 @@ const etch = (
         `.pixel { width: ${100 / gridSize.x}%; `
         + `padding-bottom: ${100 / gridSize.x}%; `
         + 'box-sizing: border-box; }'
+      );
+      pixelSize = getPixelSize(
+        gridSize.x,
+        pixels.getBoundingClientRect().width,
       );
     }
 
@@ -139,13 +166,16 @@ const etch = (
     function updateDebugDashboard() {
       const e = debug.elements;
       e.pollStatus.innerText = (
-        (pollCount > 0) ?
-          'Active' :
-          'Inactive'
+        (pollCount > 0)
+          ? 'Active'
+          : 'Inactive'
       );
       e.pollCount.innerText = pollCount;
       const cp = cursorOnScreenPosition;
       e.cursorPos.innerText = `x: ${cp.x}, y: ${cp.y}`;
+      e.pixelSize.innerText = `${pixelSize}x${pixelSize}`;
+      const pp = cursorPixelPosition;
+      e.pixelPos.innerText = `x: ${pp.x}, y: ${pp.y}`;
     }
 
     function updateCursorOnScreenPosition() {
@@ -182,6 +212,7 @@ const etch = (
 
     function pollForMouseMovement() {
       updateCursorOnScreenPosition();
+      updateCursorPixelPosition();
       updateDebugDashboard();
       if (pollCount <= 1) {
         stopPolling();
