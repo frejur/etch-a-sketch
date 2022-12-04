@@ -5,45 +5,40 @@ body {
 }
 
 h1 {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    color: rgb(236, 210, 104);
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: rgb(255, 246, 211);
     font-style: italic;
-    word-spacing: 12px;
-    font-weight: 600;
-    font-size: 48px;
+    font-weight: bold;
+    font-size: 36px;
     padding: 0;
-    margin: 0 auto;
+    margin: 10px auto 0;
     position: relative;
     z-index: 2;
-    height: 20px;
+    height: 0;
+    background-color: black;
+    text-shadow: 1px 1px 1px #2c1a01;
+    -webkit-background-clip: text;
+      -moz-background-clip: text;
 }
+
+strike {
+    text-decoration: none;
+      position: relative;
+  }
+  
+strike::before{
+      content: "";
+      width: 50%;
+      position: absolute;
+      right: 8px;
+      top: calc(50% - 3px);
+      border-bottom: 4px solid rgb(255, 246, 211);
+  }
 
 h1 sup {
     font-family: Arial, Helvetica, sans-serif;
-    vertical-align: baseline;
-    font-size: 15px;
-}
-
-h1 b {
     vertical-align: middle;
-    letter-spacing: -3px;
-    text-decoration: line-through;
-}
-
-h1 strike {
-    letter-spacing: -3px;
-    vertical-align: sub;
-}
-
-h1 span {
-    letter-spacing: 1px;
-    vertical-align: sub;
-    font-size: 56px;
-}
-
-h1 sub {
-    vertical-align: baseline;
-    font-size: 22px;
+    font-size: 15px;
 }
 
 #device {
@@ -88,7 +83,7 @@ h1 sub {
     display: flex;
     justify-content: space-between;
     z-index: 99;
-    margin-top: -30px;
+    margin-top: -45px;
     margin-bottom: 30px;
     height: 70px;
 }
