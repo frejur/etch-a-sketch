@@ -1,8 +1,9 @@
+/* eslint-sourceType script */
 const etch = (
   () => {
     'use strict';
 
-    const SZ_DEFAULT = 64;
+    const SZ_DEFAULT = 32;
     const gridSize = {
       x: SZ_DEFAULT,
       y: SZ_DEFAULT,
@@ -15,12 +16,20 @@ const etch = (
     const cursorPixelPosition = {};
     const pixels = document.getElementById('pixels');
     const style = document.createElement('style');
+    const screenMaxWidth = getScreenMaxWidth();
     document.head.appendChild(style);
     const debug = {};
-    document.getElementById('debug');
 
     const POLL_DELAY = 100;
     let pollCount = 0;
+
+    function getScreenMaxWidth() {
+      const e = document.getElementById('screen').parentElement;
+      const w = e.clientWidth;
+      const pad = parseFloat(getComputedStyle(e).paddingLeft);
+      console.log(`Width: ${w - pad * 2}`);
+      return w - pad * 2;
+    }
 
     function getDebugParameter() {
       const q = window.location.search;
@@ -39,6 +48,7 @@ const etch = (
       const d = document;
       debug.elements = {
         container: cont,
+        screenWidth: d.getElementById('screen-width'),
         pollStatus: d.getElementById('poll-status'),
         pollCount: d.getElementById('poll-count'),
         pollDelay: d.getElementById('poll-delay'),
@@ -47,6 +57,7 @@ const etch = (
         pixelPos: d.getElementById('pixel-pos'),
       };
 
+      debug.elements.screenWidth.innerText = screenMaxWidth;
       debug.elements.pollDelay.innerText = POLL_DELAY;
       return true;
     }
@@ -56,7 +67,7 @@ const etch = (
         return SZ_DEFAULT;
       }
       return (
-        Math.max(2, Math.min(100, Math.round(dim)))
+        Math.max(2, Math.min(128, Math.round(dim)))
       );
     }
 
@@ -222,7 +233,7 @@ const etch = (
       setTimeout(pollForMouseMovement, POLL_DELAY);
     }
 
-    function startPolling(pos) {
+    function startPolling() {
       if (pollCount < 1) {
         pollCount = 20;
         pollForMouseMovement();
@@ -264,8 +275,9 @@ const etch = (
     }
 
     return {
-      generateGrid: (size) => generateNewGrid(size),
-      drawGrid: () => console.log('Draw'),
+      generateGrid() {
+        generateNewGrid();
+      },
       init: initNormal,
     };
   }

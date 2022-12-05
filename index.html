@@ -20,8 +20,12 @@
             <div id="pixels"></div>
         </div>
         <div id="knobs">
-            <div class="knob" id="knob-left"></div>
-            <div class="knob" id="knob-right"></div>
+            <div class="knob" id="knob-left">
+                <div class="knob-overlay"></div>
+            </div>
+            <div class="knob" id="knob-right">
+                <div class="knob-overlay"></div>
+            </div>
         </div>
     </div>
     <div id="debug">
@@ -30,6 +34,9 @@
             <button>Initialize</button>
         </a>
         <dl>
+            <dt>Screen Width</dt>
+            <dd id="screen-width"></dd>
+
             <dt>Polling Status</dt>
             <dd id="poll-status">Inactive</dd>
 

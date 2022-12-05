@@ -17,16 +17,16 @@ h1 {
     height: 0;
     background-color: black;
     text-shadow: 1px 1px 1px #2c1a01;
-    -webkit-background-clip: text;
-      -moz-background-clip: text;
+    width: 100%;
+    background-clip: text;
 }
 
-strike {
+h1 strike {
     text-decoration: none;
       position: relative;
   }
   
-strike::before{
+h1 strike::before{
       content: "";
       width: 50%;
       position: absolute;
@@ -53,15 +53,15 @@ h1 sup {
 }
 
 #screen {
-    background-color: #cecece;
-    width: 80%;
-    margin: 50px auto;
+    margin: 50px 60px;
+    width: 100%;
     min-height: 32px;
     position: relative;
 }
 #pixels {
     display: flex;
     flex-wrap: wrap;
+    background-color: #cecece;
 }
 
 #screen-borders {
@@ -93,15 +93,25 @@ h1 sup {
     width: 90px;
     margin: 0 12px;
     background-color: #cecece;
-    border-radius: 90px;
-    border-style: solid;
-    border-color: #b9b9b9;
-    border-width: 8px;
+    border-radius: 50%;
+    border-style: dotted;
+    border-color: #dfdfdf;
+    border-width: 5px;
     box-sizing: border-box;
 }
 
-.pixel {
-    border: 1px solid black;
+.knob-overlay {
+    position: absolute;
+    height: 90px;
+    width: 90px;
+    margin-top: -5px;
+    margin-left: -5px;
+    border-radius: 50%;
+    border-style: dotted;
+    border-color: #b9b9b9;
+    border-width: 5px;
+    box-sizing: border-box;
+    transform: rotate(5deg);
 }
 
 .pixel .on {
