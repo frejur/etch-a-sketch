@@ -3,7 +3,7 @@ const etch = (
   () => {
     'use strict';
 
-    const SZ_DEFAULT = 32;
+    const SZ_DEFAULT = 16;
     const gridSize = {
       x: SZ_DEFAULT,
       y: SZ_DEFAULT,
@@ -27,7 +27,6 @@ const etch = (
       const e = document.getElementById('screen').parentElement;
       const w = e.clientWidth;
       const pad = parseFloat(getComputedStyle(e).paddingLeft);
-      console.log(`Width: ${w - pad * 2}`);
       return w - pad * 2;
     }
 
@@ -93,15 +92,22 @@ const etch = (
     function updateSize(x, y) {
       gridSize.x = validateDimension(x);
       gridSize.y = validateDimension(y);
+      const widthPx = pixels.getBoundingClientRect().width;
+      const pixelSize = getPixelSize(gridSize.x, widthPx);
       style.innerHTML = (
-        `.pixel { width: ${100 / gridSize.x}%; `
-        + `padding-bottom: ${100 / gridSize.x}%; `
+        `.pixel { width: ${pixelSize}px; `
+        + `padding-bottom: ${pixelSize}px; `
         + 'box-sizing: border-box; }'
       );
-      pixelSize = getPixelSize(
-        gridSize.x,
-        pixels.getBoundingClientRect().width,
-      );
+      const adjWidthPx = pixelSize * gridSize.x;
+      pixels.style.width = `${adjWidthPx}px`;
+      const pad = widthPx > adjWidthPx
+        ? widthPx - adjWidthPx
+        : 0;
+      const padLeft = Math.floor(pad / 2);
+      const padRight = pad - padLeft;
+      pixels.style.paddingLeft = `${padLeft}px`;
+      pixels.style.paddingRight = `${padRight}px`;
     }
 
     function populateGrid() {
@@ -129,6 +135,8 @@ const etch = (
         rowNodes = [];
         do {
           const newDiv = document.createElement('div');
+          const randA = Math.random() * 0.1;
+          newDiv.style.backgroundColor = `rgba(0, 0, 0, ${randA})`;
           pixels.appendChild(newDiv);
           rowNodes.push(newDiv);
           col += 1;
