@@ -15,6 +15,8 @@ const etch = (
     const cursorOnScreenPosition = {};
     const cursorPixelPosition = {};
     const pixels = document.getElementById('pixels');
+    const borders = document.getElementById('screen-borders');
+    const screenPause = document.getElementById('screen-pause');
     const style = document.createElement('style');
     const screenMaxWidth = getScreenMaxWidth();
     document.head.appendChild(style);
@@ -22,6 +24,7 @@ const etch = (
 
     const POLL_DELAY = 100;
     let pollCount = 0;
+    let isPause = false;
 
     function getScreenMaxWidth() {
       const e = document.getElementById('screen').parentElement;
@@ -83,17 +86,24 @@ const etch = (
     }
 
     function updateCursorPixelPosition() {
+      const oldPos = cursorPixelPosition;
       getPixelFromPosition(
         cursorOnScreenPosition,
         pixelSize,
       );
+      if (cursorPixelPosition.x !== oldPos.x ||
+        cursorPixelPosition.y !== oldPos.y)
+      {
+        return true;
+      }
+      return false;
     }
 
     function updateSize(x, y) {
       gridSize.x = validateDimension(x);
       gridSize.y = validateDimension(y);
       const widthPx = pixels.getBoundingClientRect().width;
-      const pixelSize = getPixelSize(gridSize.x, widthPx);
+      pixelSize = getPixelSize(gridSize.x, widthPx);
       style.innerHTML = (
         `.pixel { width: ${pixelSize}px; `
         + `padding-bottom: ${pixelSize}px; `
@@ -108,6 +118,8 @@ const etch = (
       const padRight = pad - padLeft;
       pixels.style.paddingLeft = `${padLeft}px`;
       pixels.style.paddingRight = `${padRight}px`;
+      pixels.style.paddingTop = `${padLeft}px`;
+      pixels.style.paddingBottom = `${padLeft}px`;
     }
 
     function populateGrid() {
@@ -183,6 +195,9 @@ const etch = (
     }
 
     function updateDebugDashboard() {
+      if (!debug.active) {
+        return;
+      }
       const e = debug.elements;
       e.pollStatus.innerText = (
         (pollCount > 0)
@@ -199,7 +214,8 @@ const etch = (
 
     function updateCursorOnScreenPosition() {
       const screenPos = pixels.getBoundingClientRect();
-      cursorOnScreenPosition.x = (
+      const newPos = {};
+      newPos.x = (
         Math.max(
           0,
           Math.min(
@@ -208,7 +224,7 @@ const etch = (
           ),
         )
       );
-      cursorOnScreenPosition.y = (
+      newPos.y = (
         Math.max(
           0,
           Math.min(
@@ -217,23 +233,54 @@ const etch = (
           ),
         )
       );
+      if (newPos.x !== cursorOnScreenPosition.x
+        || newPos.y !== cursorOnScreenPosition.y)
+      {
+        cursorOnScreenPosition.x = newPos.x;
+        cursorOnScreenPosition.y = newPos.y;
+        return true;
+      }
+      return false;
     }
 
     function stopPolling(pos) {
       if (pos) {
         cursorPosition.x = pos.x;
         cursorPosition.y = pos.y;
-        updateCursorOnScreenPosition();
+        if (updateCursorOnScreenPosition()) {
+          updateCursorPixelPosition();
+        }
       }
       pollCount = 0;
+      document.body.style.cursor = 'default';
       updateDebugDashboard();
     }
 
-    function pollForMouseMovement() {
-      updateCursorOnScreenPosition();
-      updateCursorPixelPosition();
+    function setPauseState(state) {
+      isPause = (state === true);
+      if (isPause) {
+        screenPause.style.display = 'block';
+        borders.style.backgroundColor = 'rgba(0,0,0,0.8)';
+      } else {
+        screenPause.style.display = 'none';
+        borders.style.backgroundColor = 'transparent';
+      }
+    }
+
+    function pollForMouseMovement(skipReset=false) {
+      if (pollCount===0) {
+        return;
+      }
+      if (updateCursorOnScreenPosition()) {
+        if (updateCursorPixelPosition()) {
+          if (!skipReset) {
+            resetPollCount();
+          }
+        }
+      }
       updateDebugDashboard();
       if (pollCount <= 1) {
+        setPauseState(true);
         stopPolling();
         return;
       }
@@ -243,9 +290,14 @@ const etch = (
 
     function startPolling() {
       if (pollCount < 1) {
-        pollCount = 20;
-        pollForMouseMovement();
+        document.body.style.cursor = 'crosshair';
+        resetPollCount();
+        pollForMouseMovement(true);
       }
+    }
+
+    function resetPollCount() {
+      pollCount = 20;
     }
 
     function addEventListeners() {

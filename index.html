@@ -10,21 +10,28 @@
 </head>
 <body>
     <div id="device">
-        <h1>
+        <h1 class="top-header">
             <sup>MAGIC</sup>
             <strike>C</strike>tch A Sketch
             <sup>SCREEN</sup>
         </h1>
         <div id="screen">
-            <div id="screen-borders"></div>
+            <div id="screen-borders">
+                <div id="screen-pause">
+                    <h1>PAUSE</h1>
+                    <h2>Click anywhere on the screen to resume drawing.</h2>
+                </div>
+            </div>
             <div id="pixels"></div>
         </div>
         <div id="knobs">
             <div class="knob" id="knob-left">
-                <div class="knob-overlay"></div>
+                <div class="knob-overlay knob-overlay-a"></div>
+                <div class="knob-overlay knob-overlay-b"></div>
             </div>
             <div class="knob" id="knob-right">
-                <div class="knob-overlay"></div>
+                <div class="knob-overlay knob-overlay-a"></div>
+                <div class="knob-overlay knob-overlay-b"></div>
             </div>
         </div>
     </div>
@@ -32,6 +39,10 @@
         <h2>Debug</h2>
         <a href="javascript: etch.init()">
             <button>Initialize</button>
+        </a>
+        <hr>
+        <a href="javascript: etch.idle()">
+            <button>Idle</button>
         </a>
         <dl>
             <dt>Screen Width</dt>
