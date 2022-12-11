@@ -10,13 +10,16 @@ const etch = (
     };
     let pixelSize;
     const grid = [];
+    // Drawable area on an Etch-a-Sketch: 154 mm wide by 108 mm tall.
     const ASP_R = 0.65;
     const cursorPosition = {};
     const cursorOnScreenPosition = {};
     const cursorPixelPosition = {};
     const pixels = document.getElementById('pixels');
     const borders = document.getElementById('screen-borders');
+    let borderWidth = 0;
     const screenPause = document.getElementById('screen-pause');
+    const area = document.getElementById('screen-area');
     const style = document.createElement('style');
     const screenMaxWidth = getScreenMaxWidth();
     document.head.appendChild(style);
@@ -111,15 +114,34 @@ const etch = (
       );
       const adjWidthPx = pixelSize * gridSize.x;
       pixels.style.width = `${adjWidthPx}px`;
+      area.style.width = `${adjWidthPx}px`;
+      const adjHeightPx = pixelSize * gridSize.y;
+      area.style.height = `${adjHeightPx}px`;
       const pad = widthPx > adjWidthPx
         ? widthPx - adjWidthPx
         : 0;
       const padLeft = Math.floor(pad / 2);
       const padRight = pad - padLeft;
-      pixels.style.paddingLeft = `${padLeft}px`;
-      pixels.style.paddingRight = `${padRight}px`;
-      pixels.style.paddingTop = `${padLeft}px`;
-      pixels.style.paddingBottom = `${padLeft}px`;
+      const padValues = [
+        padLeft,  // Top
+        padRight, // Right
+        padLeft,  // Bottom
+        padLeft,  // Left
+      ];
+      setPadding(pixels, padValues);
+      setPadding(area, padValues);
+    }
+    
+    function setPadding(element, paddingArray) {
+      const dirs = [
+        'Top',
+        'Left',
+        'Bottom',
+        'Right',
+      ];
+      dirs.forEach((dir, i) => {
+        element.style[`padding${dir}`] = `${paddingArray[i]}px`;
+      });
     }
 
     function populateGrid() {
@@ -301,7 +323,7 @@ const etch = (
     }
 
     function addEventListeners() {
-      const screen = document.getElementById('screen');
+      const screen = document.getElementById('screen-area');
       screen.addEventListener('mouseenter', (event) => {
         const pos = {
           x: event.pageX,
@@ -325,8 +347,13 @@ const etch = (
       };
     }
 
+    function storeScreenBorderWidth() {
+      borderWidth = (borders.offsetWidth - borders.clientWidth) / 2;
+    }
+
     function initNormal() {
       generateNewGrid();
+      storeScreenBorderWidth();
       addEventListeners();
     }
 
