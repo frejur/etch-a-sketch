@@ -3,7 +3,7 @@ const etch = (
   () => {
     'use strict';
 
-    const SZ_DEFAULT = 16;
+    const SZ_DEFAULT = 32;
     const gridSize = {
       x: SZ_DEFAULT,
       y: SZ_DEFAULT,
