@@ -3,31 +3,36 @@ const etch = (
   () => {
     'use strict';
 
-    const SZ_DEFAULT = 32;
+    // Size defaults
+    const SZ_DEFAULT = 64;
     const gridSize = {
       x: SZ_DEFAULT,
       y: SZ_DEFAULT,
     };
-    let pixelSize;
-    const grid = [];
+    
     // Drawable area on an Etch-a-Sketch: 154 mm wide by 108 mm tall.
     const ASP_R = 0.65;
+    
+    // Polling defaults (Check for idle)
+    const POLL_DELAY = 100;
+    let pollCount = 0;
+    let isPause = false;
+
+    let pixelSize;
+    const grid = [];
     const cursorPosition = {};
     const cursorOnScreenPosition = {};
     const cursorPixelPosition = {};
     const pixels = document.getElementById('pixels');
     const borders = document.getElementById('screen-borders');
-    let borderWidth = 0;
+    let borderWidth = 0; // TODO: Dynamic screen border width
     const screenPause = document.getElementById('screen-pause');
     const area = document.getElementById('screen-area');
     const style = document.createElement('style');
     const screenMaxWidth = getScreenMaxWidth();
     document.head.appendChild(style);
-    const debug = {};
 
-    const POLL_DELAY = 100;
-    let pollCount = 0;
-    let isPause = false;
+    const debug = {};
 
     function getScreenMaxWidth() {
       const e = document.getElementById('screen').parentElement;
